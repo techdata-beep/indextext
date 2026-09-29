@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panda EV — ລາຍງານການເງິນ ສ.ຫ. 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+Lao:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --navy: #0B2E5C;
+    --teal: #00B4B4;
+    --teal-light: #00D4D4;
+    --teal-bg: rgba(0,180,180,0.1);
+    --white: #FFFFFF;
+    --bg: #F0F4F8;
+    --card-bg: #FFFFFF;
+    --text: #1A2D4E;
+    --muted: #6B7B99;
+    --border: #E0E8F0;
+    --green: #00C896;
+    --red: #FF4D6A;
+    --orange: #FF8C42;
+    --shadow: 0 2px 12px rgba(11,46,92,0.08);
+    --shadow-lg: 0 8px 32px rgba(11,46,92,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans Lao', 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    background: var(--navy);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .logo {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: var(--teal);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 18px; color: white;
+  }
+  .header-title { color: white; }
+  .header-title h1 { font-size: 17px; font-weight: 700; letter-spacing: 0.3px; }
+  .header-title p { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .header-badge {
+    background: rgba(0,180,180,0.2); border: 1px solid rgba(0,180,180,0.4);
+    color: var(--teal-light); padding: 6px 16px; border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+  }
+
+  /* ===== MAIN ===== */
+  .main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
+
+  /* ===== SECTION TITLE ===== */
+  .section-title {
+    font-size: 13px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--muted);
+    margin-bottom: 14px; margin-top: 28px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-title::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* ===== KPI TILES ===== */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 4px;
+  }
+  .kpi {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid transparent;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi.teal  { border-left-color: var(--teal); }
+  .kpi.green { border-left-color: var(--green); }
+  .kpi.red   { border-left-color: var(--red); }
+  .kpi.orange { border-left-color: var(--orange); }
+  .kpi.navy  { border-left-color: var(--navy); }
+  .kpi.purple { border-left-color: #7C3AED; }
+
+  .kpi::after {
+    content: '';
+    position: absolute; right: -20px; top: -20px;
+    width: 90px; height: 90px; border-radius: 50%;
+    opacity: 0.05;
+    background: currentColor;
+  }
+  .kpi-label {
+    font-size: 12px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.1;
+  }
+  .kpi-value.negative { color: var(--red); }
+  .kpi-value.positive { color: var(--green); }
+  .kpi-sub {
+    font-size: 11px; color: var(--muted); margin-top: 6px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .kpi-icon {
+    position: absolute; right: 18px; top: 18px;
+    font-size: 24px; opacity: 0.15;
+  }
+
+  /* ===== CHARTS GRID ===== */
+  .charts-grid-2 {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px;
+  }
+  .charts-grid-3 {
+    display: grid; grid-template-columns: 2fr 1fr; gap: 18px; margin-bottom: 18px;
+  }
+  .chart-card {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: var(--shadow);
+  }
+  .chart-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .chart-title { font-size: 14px; font-weight: 700; color: var(--text); }
+  .chart-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .chart-badge {
+    background: var(--teal-bg); color: var(--teal);
+    padding: 3px 10px; border-radius: 12px;
+    font-size: 11px; font-weight: 600;
+  }
+  .chart-wrap { position: relative; height: 220px; }
+  .chart-wrap-lg { position: relative; height: 260px; }
+  .chart-wrap-sm { position: relative; height: 200px; }
+
+  /* ===== BALANCE SHEET BARS ===== */
+  .bs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .bs-col-title {
+    font-size: 13px; font-weight: 700; color: var(--navy);
+    text-align: center; margin-bottom: 12px; padding-bottom: 8px;
+    border-bottom: 2px solid var(--teal);
+  }
+  .bs-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 8px;
+  }
+  .bs-label { font-size: 11px; color: var(--text); width: 160px; flex-shrink: 0; line-height: 1.3; }
+  .bs-bar-wrap { flex: 1; background: #EEF2F7; border-radius: 4px; height: 18px; overflow: hidden; }
+  .bs-bar { height: 100%; border-radius: 4px; transition: width 0.8s ease; }
+  .bs-val { font-size: 10px; font-weight: 600; color: var(--muted); width: 75px; text-align: right; flex-shrink: 0; }
+
+  /* ===== STATION TABLE ===== */
+  .station-table { width: 100%; border-collapse: collapse; }
+  .station-table th {
+    font-size: 11px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--border);
+  }
+  .station-table th:first-child { text-align: left; }
+  .station-table td {
+    font-size: 12px; padding: 9px 10px; border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .station-table td:not(:first-child) { text-align: right; font-family: 'Space Grotesk', monospace; }
+  .station-table tr:last-child td { border-bottom: none; }
+  .station-table tr:hover td { background: var(--teal-bg); }
+  .rank-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--navy); color: white; font-size: 10px; font-weight: 700;
+    margin-right: 6px;
+  }
+  .rank-badge.gold { background: #F59E0B; }
+  .rank-badge.silver { background: #6B7B99; }
+  .rank-badge.bronze { background: #CD7F32; }
+  .mini-bar { display: inline-block; height: 6px; border-radius: 3px; background: var(--teal); vertical-align: middle; margin-left: 6px; }
+  .pct-label { font-size: 10px; color: var(--muted); margin-left: 4px; }
+
+  /* ===== PROFITABILITY GAUGE ===== */
+  .profit-summary {
+    display: flex; gap: 0; border-radius: 10px; overflow: hidden;
+    height: 44px; margin-bottom: 14px;
+  }
+  .profit-seg {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: white;
+    transition: flex 0.6s ease;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    text-align: center; padding: 24px 32px;
+    font-size: 11px; color: var(--muted);
+    border-top: 1px solid var(--border); margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo">🐼</div>
+    <div class="header-title">
+      <h1>Panda EV — ລາຍງານການເງີນ</h1>
+      <p>ໃບດຸນດ່ຽງທົ່ວໄປ · ບໍລິສັດ ແພນດ້າ ອີວີ ຈຳກັດ</p>
+    </div>
+  </div>
+  <div class="header-badge">📅 01/08/2026 – 31/08/2026 · LAK</div>
+</div>
+
+<div class="main">
+
+  <!-- KPI TILES -->
+  <div class="section-title">📊 ສະຫຼຸບການເງີນ ເດືອນ ສ.ຫ. 2026</div>
+  <div class="kpi-grid">
+    <div class="kpi teal">
+      <div class="kpi-label">ລາຍຮັບ ສ.ຫ. (Revenue)</div>
+      <div class="kpi-value positive">910.5 ລ້ານ</div>
+      <div class="kpi-sub">ຈາກການຊາກໄຟ EV</div>
+      <div class="kpi-icon">💰</div>
+    </div>
+    <div class="kpi red">
+      <div class="kpi-label">ລາຍຈ່າຍ ສ.ຫ. (Expenses)</div>
+      <div class="kpi-value negative">1,243.6 ລ້ານ</div>
+      <div class="kpi-sub">ລວມຄ່າໄຟ + ເງີນເດືອນ + ອື່ນໆ</div>
+      <div class="kpi-icon">📉</div>
+    </div>
+    <div class="kpi orange">
+      <div class="kpi-label">ກຳໄລ / ຂາດທຶນ ສ.ຫ.</div>
+      <div class="kpi-value negative">–333.1 ລ້ານ</div>
+      <div class="kpi-sub">ຂາດທຶນ ສ.ຫ. (Operating Loss)</div>
+      <div class="kpi-icon">⚠️</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">ກຳໄລຂັ້ນຕົ້ນ (Gross Margin)</div>
+      <div class="kpi-value positive">197.8 ລ້ານ</div>
+      <div class="kpi-sub">ລາຍຮັບ − ຄ່າໄຟຟ້າ (21.7%)</div>
+      <div class="kpi-icon">⚡</div>
+    </div>
+    <div class="kpi teal">
+      <div class="kpi-label">ລາຍຮັບສະສົມ (Total Revenue)</div>
+      <div class="kpi-value">2,212.2 ລ້ານ</div>
+      <div class="kpi-sub">ນັບແຕ່ເປີດດຳເນີນງານ</div>
+      <div class="kpi-icon">📈</div>
+    </div>
+    <div class="kpi navy">
+      <div class="kpi-label">ທຶນຈົດທະບຽນ (Share Capital)</div>
+      <div class="kpi-value">38,279.9 ລ້ານ</div>
+      <div class="kpi-sub">ທຶນລວມ (A + B)</div>
+      <div class="kpi-icon">🏦</div>
+    </div>
+  </div>
+
+  <!-- PROFIT MARGIN BAR -->
+  <div class="chart-card" style="margin-top:18px; padding:18px 22px;">
+    <div style="font-size:12px; font-weight:700; color:var(--text); margin-bottom:10px;">
+      ອັດຕາສ່ວນ ລາຍຮັບ vs ລາຍຈ່າຍ ເດືອນ ສ.ຫ.
+    </div>
+    <div class="profit-summary">
+      <div class="profit-seg" style="flex:910; background:var(--teal);">ລາຍຮັບ 910.5M</div>
+      <div class="profit-seg" style="flex:1244; background:var(--red);">ລາຍຈ່າຍ 1,243.6M</div>
+    </div>
+    <div style="display:flex; gap:20px; font-size:11px; color:var(--muted);">
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--teal);margin-right:4px;"></span>ລາຍຮັບ (42.3%)</span>
+      <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--red);margin-right:4px;"></span>ລາຍຈ່າຍ (57.7%)</span>
+      <span style="margin-left:auto; color:var(--red); font-weight:600;">ຂາດທຶນ: –333.1M LAK</span>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 1: Revenue by station + Expense donut -->
+  <div class="section-title">📍 ລາຍຮັບ ແລະ ລາຍຈ່າຍ ປະຈຳເດືອນ</div>
+  <div class="charts-grid-2">
+    <!-- Revenue by station -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">ລາຍຮັບ ແຕ່ລະສະຖານີ (ສ.ຫ. 2026)</div>
+          <div class="chart-sub">ລວມ 910,460,024 LAK</div>
+        </div>
+        <div class="chart-badge">ສ.ຫ. 2026</div>
+      </div>
+      <div class="chart-wrap-lg">
+        <canvas id="stationRevChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Expense donut -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">ສັດສ່ວນລາຍຈ່າຍ (ສ.ຫ. 2026)</div>
+          <div class="chart-sub">ລວມ 1,243,582,388 LAK</div>
+        </div>
+        <div class="chart-badge">ສ.ຫ. 2026</div>
+      </div>
+      <div class="chart-wrap-lg">
+        <canvas id="expenseDonutChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 2: Revenue vs Elec per station + Top expenses bar -->
+  <div class="charts-grid-2">
+    <!-- Revenue vs electricity per station -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">ລາຍຮັບ vs ຄ່າໄຟຟ້າ ແຕ່ລະສະຖານີ</div>
+          <div class="chart-sub">ສ.ຫ. 2026 · ຫົວໜ່ວຍ: ລ້ານ LAK</div>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="revVsElecChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Expenses horizontal bar -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">ລາຍຈ່າຍຫຼັກ ສ.ຫ. 2026</div>
+          <div class="chart-sub">ລ້ານ LAK</div>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="expBarChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW 3: Station detail table -->
+  <div class="section-title">🏪 ລາຍລະອຽດລາຍຮັບ ແຕ່ລະສະຖານີ</div>
+  <div class="chart-card" style="margin-bottom:18px;">
+    <table class="station-table">
+      <thead>
+        <tr>
+          <th>ສະຖານີ</th>
+          <th>ລາຍຮັບ ສ.ຫ. (LAK)</th>
+          <th>ຄ່າໄຟ ສ.ຫ. (LAK)</th>
+          <th>ກຳໄລຂັ້ນຕົ້ນ (LAK)</th>
+          <th>Margin %</th>
+          <th>ລາຍຮັບສະສົມ (LAK)</th>
+          <th>ສັດສ່ວນ</th>
+        </tr>
+      </thead>
+      <tbody id="stationTableBody"></tbody>
+      <tfoot>
+        <tr style="background:#F0F4F8; font-weight:700;">
+          <td style="font-weight:700;">ລວມທັງໝົດ</td>
+          <td style="text-align:right; font-family:'Space Grotesk'; font-weight:700;">910,460,024</td>
+          <td style="text-align:right; font-family:'Space Grotesk'; font-weight:700;">712,613,146</td>
+          <td style="text-align:right; font-family:'Space Grotesk'; font-weight:700; color:var(--green);">197,846,878</td>
+          <td style="text-align:right; font-weight:700; color:var(--green);">21.7%</td>
+          <td style="text-align:right; font-family:'Space Grotesk'; font-weight:700;">2,209,440,098</td>
+          <td style="text-align:right;">100%</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- BALANCE SHEET -->
+  <div class="section-title">🏦 ໃບດຸນດ່ຽງ (Balance Sheet) · 31/08/2026</div>
+  <div class="charts-grid-2">
+
+    <!-- Assets chart -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">ໂຄງສ້າງສິນຊັບ (Assets)</div>
+          <div class="chart-sub">ລວມ ≈ 38,619 ລ້ານ LAK</div>
+        </div>
+        <div class="chart-badge">31/08/2026</div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="assetsChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Liabilities chart -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">ໜີ້ສິນ ແລະ ທຶນຮອນ</div>
+          <div class="chart-sub">ລວມ ≈ 39,787 ລ້ານ LAK</div>
+        </div>
+        <div class="chart-badge">31/08/2026</div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="liabChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASSET BREAKDOWN BARS -->
+  <div class="chart-card" style="margin-bottom:18px;">
+    <div class="chart-header">
+      <div>
+        <div class="chart-title">ລາຍລະອຽດສິນຊັບ (Asset Breakdown) · 31/08/2026</div>
+        <div class="chart-sub">ຫົວໜ່ວຍ: ລ້ານ LAK</div>
+      </div>
+    </div>
+    <div class="bs-grid" id="assetBarsGrid"></div>
+  </div>
+
+  <!-- CUMULATIVE REVENUE CHART -->
+  <div class="section-title">📈 ລາຍຮັບສະສົມ ແຕ່ລະສະຖານີ (ນັບທັງໝົດ)</div>
+  <div class="chart-card" style="margin-bottom:18px;">
+    <div class="chart-header">
+      <div>
+        <div class="chart-title">ລາຍຮັບສະສົມ ທຸກສະຖານີ (ຕັ້ງແຕ່ເປີດ)</div>
+        <div class="chart-sub">ຍອດ Closing Balance · ລວມ 2,212,230,098 LAK</div>
+      </div>
+      <div class="chart-badge">ທຸກໄລຍະ</div>
+    </div>
+    <div class="chart-wrap-lg">
+      <canvas id="cumulRevChart"></canvas>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  ບໍລິສັດ ແພນດ້າ ອີວີ ຈຳກັດ · ບ້ານ ສາຍລົມ, ເມືອງ ຈັນທະບູລີ, ນະຄອນຫຼວງວຽງຈັນ ·
+  ໃບດຸນດ່ຽງທົ່ວໄປ ປີການບັນຊີ 01/08/2026 – 31/08/2026 · ຫົວໜ່ວຍ: LAK
+</div>
+
+<script>
+// ===== DATA =====
+const NAVY = '#0B2E5C', TEAL = '#00B4B4', GREEN = '#00C896', RED = '#FF4D6A', ORANGE = '#FF8C42';
+const PURPLE = '#7C3AED', BLUE = '#3B82F6';
+
+// Station data (August movements)
+const stations = [
+  { name: 'ໂພນໄຊ',         rev: 228383670, elec: 177845065, cumRev: 602203115 },
+  { name: 'ດົງນາໂຊກ',      rev: 201204307, elec: 155895676, cumRev: 485080211 },
+  { name: 'ບຶງທາດຫຼວງ',    rev: 167471902, elec: 132247744, cumRev: 436614961 },
+  { name: 'ຮ່ອງໄກ່ແກ້ວ',  rev: 116707253, elec:  88757143, cumRev: 289291417 },
+  { name: 'ລາວ KM06',       rev: 101140218, elec:  83594075, cumRev: 172983696 },
+  { name: 'ແຄມຂອງ',        rev:  95552674, elec:  74273443, cumRev: 223266697 },
+];
+const totalRev = stations.reduce((s,x)=>s+x.rev,0);
+const totalCumRev = stations.reduce((s,x)=>s+x.cumRev,0);
+
+// Expenses August
+const expData = [
+  { label: 'ຄ່າໄຟຟ້າ Electricity',     val: 712613146, color: RED },
+  { label: 'ເງີນເດືອນ Salaries',        val: 362355462, color: NAVY },
+  { label: 'Cloud/IT Storage',           val:  48258495, color: BLUE },
+  { label: 'ຄ່າເດີນທາງ Travel',          val:  39401801, color: ORANGE },
+  { label: 'ຄ່າເຊົ່າ Rental',           val:  33262668, color: '#7C3AED' },
+  { label: 'ຄ່າບຳລຸງຮັກສາ Maintenance', val:  11593200, color: '#06B6D4' },
+  { label: 'ທຳນຽມທະນາຄານ Bank Fees',   val:  10547707, color: '#EAB308' },
+  { label: 'ການຕະຫຼາດ Marketing',       val:   9960000, color: '#EC4899' },
+  { label: 'ເຄື່ອງໃຊ້ Office Supplies', val:   6050000, color: '#10B981' },
+  { label: 'ອື່ນໆ Others',              val:   9539909, color: '#94A3B8' },
+];
+const totalExp = expData.reduce((s,x)=>s+x.val,0);
+
+// Assets for pie
+const assetsData = [
+  { label: 'ຄ່າກໍ່ສ້າງສະຖານີ',   val: 12479172000, color: NAVY },
+  { label: 'ຕູ້ສາກ EV Chargers',   val:  6669780040, color: TEAL },
+  { label: 'ໝໍ້ແປງໄຟ Transformers',val:  3731200000, color: BLUE },
+  { label: 'ລ່ວງໜ້າເຊົ່າດີນ',     val:  7848529995, color: ORANGE },
+  { label: 'ເງີນມັດຈຳ Deposit',    val:  2930958000, color: '#7C3AED' },
+  { label: 'ທະນາຄານ LAK',         val:  1749195813, color: GREEN },
+  { label: 'ທຶນກຳລັງປະກອບ',       val:   539999900, color: '#EAB308' },
+  { label: 'ອື່ນໆ (App/Dev/FA)',   val:  1669665936, color: '#94A3B8' },
+];
+
+const liabData = [
+  { label: 'ທຶນຈົດທະບຽນ (Share Capital)', val: 38279901840, color: NAVY },
+  { label: 'ຈ່າຍ EDL (AP EDL)',             val:   943635207, color: RED },
+  { label: 'Wallet ລູກຄ້າ',               val:   209912207, color: TEAL },
+  { label: 'ອາກອນ VAT ຕ້ອງມອບ',           val:   159118255, color: ORANGE },
+  { label: 'ເງີນເດືອນຕ້ອງຈ່າຍ',           val:   100032328, color: '#7C3AED' },
+  { label: 'ອາກອນ Tax Payable',            val:    35706154, color: '#EAB308' },
+  { label: 'ອື່ນໆ',                       val:    58803719, color: '#94A3B8' },
+];
+
+// ===== STATION TABLE =====
+const tbody = document.getElementById('stationTableBody');
+const rankClasses = ['gold','silver','bronze','','',''];
+stations.sort((a,b)=>b.rev-a.rev).forEach((s,i)=>{
+  const gm = s.rev - s.elec;
+  const margin = (gm/s.rev*100).toFixed(1);
+  const pct = (s.rev/totalRev*100).toFixed(1);
+  const barW = Math.round(s.rev/totalRev*120);
+  const marginColor = gm>0?'color:var(--green)':'color:var(--red)';
+  tbody.innerHTML += `<tr>
+    <td><span class="rank-badge ${rankClasses[i]}">${i+1}</span>${s.name}</td>
+    <td>${s.rev.toLocaleString()}</td>
+    <td>${s.elec.toLocaleString()}</td>
+    <td style="${marginColor}">${gm.toLocaleString()}</td>
+    <td style="${marginColor}">${margin}%</td>
+    <td>${s.cumRev.toLocaleString()}</td>
+    <td><div class="mini-bar" style="width:${barW}px"></div><span class="pct-label">${pct}%</span></td>
+  </tr>`;
+});
+
+// ===== ASSET BREAKDOWN BARS =====
+const assetGrid = document.getElementById('assetBarsGrid');
+const maxAsset = Math.max(...assetsData.map(x=>x.val));
+let leftHTML='', rightHTML='';
+assetsData.forEach((a,i)=>{
+  const barW = Math.round(a.val/maxAsset*100);
+  const billions = (a.val/1e9).toFixed(2) + 'B';
+  const html=`<div class="bs-row">
+    <div class="bs-label">${a.label}</div>
+    <div class="bs-bar-wrap"><div class="bs-bar" style="width:${barW}%;background:${a.color}"></div></div>
+    <div class="bs-val">${billions}</div>
+  </div>`;
+  if(i<4) leftHTML+=html; else rightHTML+=html;
+});
+assetGrid.innerHTML=`<div><div class="bs-col-title">ສິນຊັບ (Assets)</div>${leftHTML}</div>
+                      <div><div class="bs-col-title">ສິນຊັບ (ຕໍ່)</div>${rightHTML}</div>`;
+
+// ===== CHART.JS DEFAULTS =====
+Chart.defaults.font.family = "'Noto Sans Lao','Space Grotesk',sans-serif";
+Chart.defaults.color = '#6B7B99';
+
+function fmtM(v){ return (v/1e6).toFixed(1)+'M'; }
+function fmtB(v){ return (v/1e9).toFixed(2)+'B'; }
+
+// ===== 1. STATION REVENUE BAR =====
+new Chart(document.getElementById('stationRevChart'), {
+  type: 'bar',
+  data: {
+    labels: stations.map(s=>s.name),
+    datasets: [{
+      label: 'ລາຍຮັບ ສ.ຫ.',
+      data: stations.map(s=>s.rev/1e6),
+      backgroundColor: [TEAL,'#00C8C8','#00DCDC','#00C896','#00A896','#009680'],
+      borderRadius: 6, borderSkipped: false,
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins: {
+      legend:{display:false},
+      tooltip:{ callbacks:{ label: ctx=>' '+fmtM(ctx.raw*1e6) } }
+    },
+    scales:{
+      x:{ grid:{display:false}, ticks:{font:{size:11}} },
+      y:{ grid:{color:'#E0E8F0'}, ticks:{callback:v=>v+'M', font:{size:10}} }
+    }
+  }
+});
+
+// ===== 2. EXPENSE DONUT =====
+new Chart(document.getElementById('expenseDonutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: expData.map(e=>e.label),
+    datasets: [{ data: expData.map(e=>e.val/1e6), backgroundColor: expData.map(e=>e.color), borderWidth: 2, borderColor:'#fff' }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    cutout:'60%',
+    plugins: {
+      legend:{ position:'right', labels:{ font:{size:10}, boxWidth:12, padding:8 } },
+      tooltip:{ callbacks:{ label: ctx=>` ${ctx.label}: ${ctx.raw.toFixed(1)}M (${(ctx.raw/totalExp*1e8).toFixed(1)}%)` } }
+    }
+  }
+});
+
+// ===== 3. REV VS ELEC PER STATION =====
+new Chart(document.getElementById('revVsElecChart'), {
+  type:'bar',
+  data:{
+    labels: stations.map(s=>s.name),
+    datasets:[
+      { label:'ລາຍຮັບ', data:stations.map(s=>+(s.rev/1e6).toFixed(1)), backgroundColor:TEAL, borderRadius:4 },
+      { label:'ຄ່າໄຟຟ້າ', data:stations.map(s=>+(s.elec/1e6).toFixed(1)), backgroundColor:RED, borderRadius:4 }
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'top', labels:{font:{size:10},boxWidth:12}},
+      tooltip:{ callbacks:{ label:ctx=>` ${ctx.dataset.label}: ${ctx.raw}M` } }
+    },
+    scales:{
+      x:{grid:{display:false}, ticks:{font:{size:10}}},
+      y:{grid:{color:'#E0E8F0'}, ticks:{callback:v=>v+'M',font:{size:10}}}
+    }
+  }
+});
+
+// ===== 4. EXPENSES HORIZONTAL BAR =====
+const expSorted = [...expData].sort((a,b)=>b.val-a.val);
+new Chart(document.getElementById('expBarChart'), {
+  type:'bar',
+  data:{
+    labels: expSorted.map(e=>e.label),
+    datasets:[{ data:expSorted.map(e=>+(e.val/1e6).toFixed(1)), backgroundColor:expSorted.map(e=>e.color), borderRadius:4, borderSkipped:false }]
+  },
+  options:{
+    indexAxis:'y',
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.raw}M LAK`}} },
+    scales:{
+      x:{grid:{color:'#E0E8F0'}, ticks:{callback:v=>v+'M',font:{size:9}}},
+      y:{grid:{display:false}, ticks:{font:{size:9}}}
+    }
+  }
+});
+
+// ===== 5. ASSETS PIE =====
+new Chart(document.getElementById('assetsChart'), {
+  type:'doughnut',
+  data:{
+    labels: assetsData.map(a=>a.label),
+    datasets:[{ data:assetsData.map(a=>+(a.val/1e9).toFixed(2)), backgroundColor:assetsData.map(a=>a.color), borderWidth:2, borderColor:'#fff' }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false, cutout:'55%',
+    plugins:{
+      legend:{position:'right', labels:{font:{size:9},boxWidth:10,padding:6}},
+      tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw}B`}}
+    }
+  }
+});
+
+// ===== 6. LIABILITIES PIE =====
+new Chart(document.getElementById('liabChart'), {
+  type:'doughnut',
+  data:{
+    labels: liabData.map(a=>a.label),
+    datasets:[{ data:liabData.map(a=>+(a.val/1e9).toFixed(3)), backgroundColor:liabData.map(a=>a.color), borderWidth:2, borderColor:'#fff' }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false, cutout:'55%',
+    plugins:{
+      legend:{position:'right', labels:{font:{size:9},boxWidth:10,padding:6}},
+      tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw}B`}}
+    }
+  }
+});
+
+// ===== 7. CUMULATIVE REVENUE BY STATION =====
+const cumulSorted = [...stations].sort((a,b)=>b.cumRev-a.cumRev);
+new Chart(document.getElementById('cumulRevChart'), {
+  type:'bar',
+  data:{
+    labels: cumulSorted.map(s=>s.name),
+    datasets:[{
+      label:'ລາຍຮັບສະສົມ',
+      data: cumulSorted.map(s=>+(s.cumRev/1e6).toFixed(1)),
+      backgroundColor:[TEAL,'#00C8C8','#00DCDC','#00A896','#009680','#007860'],
+      borderRadius:6, borderSkipped:false
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>` ${ctx.raw}M LAK`}}
+    },
+    scales:{
+      x:{grid:{display:false}, ticks:{font:{size:11}}},
+      y:{grid:{color:'#E0E8F0'}, ticks:{callback:v=>v+'M', font:{size:10}}}
+    }
+  }
+});
+</script>
+</body>
+</html>
